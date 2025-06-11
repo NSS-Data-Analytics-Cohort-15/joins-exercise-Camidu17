@@ -63,8 +63,37 @@ INNER JOIN rating
 ON specs.movie_id = rating.movie_id
 WHERE headquarters NOT LIKE '%CA'
 ORDER BY rating.imdb_rating DESC;
---ANSWER:2 dirty dancing
+--ANSWER: 2, dirty dancing
 
 --QUESTION 7  Which have a higher average rating, movies which are over two hours long or movies which are under two hours?
+-- FROM Krithika
 
+SELECT 'movies < 2 hours' AS movie_time, AVG(imdb_rating)
+FROM specs
+JOIN rating
+	USING(movie_id)
+WHERE  length_in_min <120
+--UNION
+SELECT 'movies > 2 hours' AS movie_time ,AVG(imdb_rating)
+FROM specs
+JOIN rating
+	USING(movie_id)
+WHERE  length_in_min >120
+--GROUP BY film_title
+
+--from Jennifer
+
+SELECT
+    CASE
+        WHEN specs.length_in_min > 120 THEN 'Over 2 Hours'
+        WHEN specs.length_in_min <= 120 THEN '2 Hours or Less' -- This includes movies exactly 120 mins. 
+    END AS film_length_category, -- This creates a new column called film_length_category that assigns each movie to one of your desired categories based on its length 
+    AVG(rating.imdb_rating) AS average_rating
+FROM
+    specs
+JOIN
+    rating ON specs.movie_id = rating.movie_id
+GROUP BY
+    film_length_category -- Grouping all movies belonging to 'Over 2 Hours' into one group and '2 Hours or Less' into another, allowing AVG() to calculate the average for each category.
+ORDER BY 1 DESC;
 
